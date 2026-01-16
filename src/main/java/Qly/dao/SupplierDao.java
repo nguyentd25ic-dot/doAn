@@ -16,6 +16,7 @@ public class SupplierDao {
         "UPDATE Supplier SET SupplierName = ?, Phone = ?, Email = ?, Address = ? WHERE SupplierID = ?";
     private static final String DELETE_SQL = "DELETE FROM Supplier WHERE SupplierID = ?";
 
+    private static final String TOTAL_SQL = "SELECT COUNT(*) FROM Supplier";
     // Lấy danh sách nhà cung cấp để hiển thị/đổ vào combobox.
     public List<Supplier> getSuppliers() {
         List<Supplier> list = new ArrayList<>();
@@ -79,6 +80,19 @@ public class SupplierDao {
             e.printStackTrace();
         }
         return false;
+    }
+    public int getTotalSup() {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(TOTAL_SQL);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
 

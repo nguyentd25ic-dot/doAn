@@ -28,6 +28,7 @@ public class HoaDonDao {
     private static final String SELECT_DETAIL_SQL =
         "SELECT c.MaSP, sp.TenSP, c.SoLuong, c.DonGia " +
         "FROM ChiTietHoaDon c JOIN SanPham sp ON c.MaSP = sp.MaSP WHERE c.MaHD = ?";
+    private static final String TOTAL_SQL="SELECT COUNT(*) FROM HoaDon";
 
     private static final DateTimeFormatter ID_FORMATTER = DateTimeFormatter.ofPattern("yyMMdd");
     private static final int DEFAULT_ID_LENGTH = 10;
@@ -220,5 +221,18 @@ public class HoaDonDao {
             }
         }
         return null;
+    }
+    public int getTotalInvoice() {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(TOTAL_SQL);
+             ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

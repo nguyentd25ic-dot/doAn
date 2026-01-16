@@ -41,6 +41,7 @@ public class StatsPanelBuilder {
         new Color(52, 152, 219),
         new Color(241, 196, 15)
     };
+    private static final Dimension PIE_CHART_SIZE = new Dimension(260, 260);
 
     public StatsPanelBuilder(Color cardBackground, Color headingColor, StatsDao statsDao) {
         this.cardBackground = cardBackground;
@@ -142,7 +143,14 @@ public class StatsPanelBuilder {
         bottom.add(new JScrollPane(table), BorderLayout.CENTER);
 
         body.add(bottom);
-        panel.add(body, BorderLayout.CENTER);
+
+        JScrollPane scrollPane = new JScrollPane(body);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
         return panel;
     }
 
@@ -187,7 +195,8 @@ public class StatsPanelBuilder {
         label.setForeground(headingColor);
 
         PieChartPanel pieChartPanel = new PieChartPanel(slices, PIE_COLORS);
-        pieChartPanel.setPreferredSize(new Dimension(220, 220));
+        pieChartPanel.setPreferredSize(PIE_CHART_SIZE);
+        pieChartPanel.setMinimumSize(PIE_CHART_SIZE);
 
         JPanel legend = buildLegend(slices);
 

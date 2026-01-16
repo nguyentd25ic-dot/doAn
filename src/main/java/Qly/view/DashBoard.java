@@ -19,6 +19,8 @@ import Qly.view.panel.SupplierPanelBuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 // Màn hình điều khiển trung tâm sau khi đăng nhập.
 public class DashBoard extends JFrame {
@@ -27,6 +29,7 @@ public class DashBoard extends JFrame {
     private static final Color CONTENT_BG = new Color(242, 247, 250);
     private static final Color CARD_BG = Color.WHITE;
     private static final Color ACCENT = Color.decode("#2CB67D");
+    private static final int SUMMARY_REFRESH_INTERVAL_MS = 15000;
 
     private final User currentUser;
     private JPanel contentBody;
@@ -35,6 +38,10 @@ public class DashBoard extends JFrame {
     private JButton btnKho, btnTraCuu;
     private JButton btnSanPham, btnHoaDon, btnLapHoaDon, btnNhapHang, btnLichSuNhapHang;
     private JButton btnNhaCungCap, btnThongKe, btnDangXuat;
+
+    private final ProductDao productDao;
+    private final SupplierDao supplierDao;
+    private final HoaDonDao hoaDonDao;
 
     private final InventoryPanelBuilder inventoryPanelBuilder;
     private final SearchPanelBuilder searchPanelBuilder;
@@ -46,6 +53,14 @@ public class DashBoard extends JFrame {
     private final NhapHangListPanelBuilder nhapHangListPanelBuilder;
     private final NhapHangFormPanelBuilder nhapHangFormPanelBuilder;
 
+    private JLabel totalStockValueLabel;
+    private JLabel totalInvoiceValueLabel;
+    private JLabel totalSupValueLabel;
+
+    private int totalStock;
+    private int totalSup;
+    private int totalInvoice;
+    private Timer summaryRefreshTimer;
     public DashBoard(User user) {
         this.currentUser = user;
         setTitle("Quản lý dụng cụ y tế - " + user.getRole());
@@ -58,12 +73,15 @@ public class DashBoard extends JFrame {
         setContentPane(root);
 
         // Chuẩn bị các DAO chia sẻ cho toàn bộ panel con.
-        ProductDao productDao = new ProductDao();
-        SupplierDao supplierDao = new SupplierDao();
-        HoaDonDao hoaDonDao = new HoaDonDao();
+        this.productDao = new ProductDao();
+        this.supplierDao = new SupplierDao();
+        this.hoaDonDao = new HoaDonDao();
         NhapHangDao nhapHangDao = new NhapHangDao();
         StatsDao statsDao = new StatsDao();
         //lấy thông tin cho stat card
+        this.totalStock = productDao.getTotalStock();
+        this.totalSup = supplierDao.getTotalSup();
+        this.totalInvoice = hoaDonDao.getTotalInvoice();
 
         inventoryPanelBuilder = new InventoryPanelBuilder(CARD_BG, NAV_BG_DARK, productDao);
         searchPanelBuilder = new SearchPanelBuilder(CARD_BG, NAV_BG_DARK, productDao);
@@ -81,11 +99,18 @@ public class DashBoard extends JFrame {
         root.add(navPanel, BorderLayout.WEST);
         root.add(mainPanel, BorderLayout.CENTER);
 
+        addWindowFocusListener(new WindowAdapter() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                refreshSummaryStats();
+            }
+        });
+
         wireActions();
         applyRolePermissions();
         showContent("Tổng quan", "Chọn tính năng để xem chi tiết dòng sản phẩm, đơn hàng và kho dụng cụ y tế.");
+        startSummaryAutoRefresh();
         setVisible(true);
-        int totalStock = productDao.getTotalStock();
     }
 
     // Tạo menu điều hướng bên trái theo vai trò người dùng.
@@ -192,14 +217,22 @@ public class DashBoard extends JFrame {
         refreshButton.setForeground(Color.WHITE);
         refreshButton.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
         refreshButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        refreshButton.addActionListener(e -> showContent("Tổng quan", "Dữ liệu đã được làm mới."));
+        refreshButton.addActionListener(e -> {
+            refreshSummaryStats();
+            showContent("Tổng quan", "Dữ liệu đã được làm mới.");
+        });
         header.add(refreshButton, BorderLayout.EAST);
+
+        totalStockValueLabel = new JLabel();
+        totalInvoiceValueLabel = new JLabel();
+        totalSupValueLabel = new JLabel();
+        refreshSummaryStats();
 
         JPanel statPanel = new JPanel(new GridLayout(1, 3, 18, 18));
         statPanel.setOpaque(false);
-        statPanel.add(createStatCard("Tồn kho", String.valueOf(totalStock), "Dụng cụ sẵn sàng"));
-        statPanel.add(createStatCard("Đơn hàng mở", "32", "Đang xử lý"));
-        statPanel.add(createStatCard("Nhà cung cấp", "14", "Đang hoạt động"));
+        statPanel.add(createStatCard("Tồn kho", totalStockValueLabel, "Dụng cụ sẵn sàng"));
+        statPanel.add(createStatCard("Đơn hàng mở", totalInvoiceValueLabel, "Đang xử lý"));
+        statPanel.add(createStatCard("Nhà cung cấp", totalSupValueLabel, "Đang hoạt động"));
 
         contentBody = new JPanel(new BorderLayout());
         contentBody.setOpaque(false);
@@ -229,7 +262,7 @@ public class DashBoard extends JFrame {
         return button;
     }
     // Thẻ nhỏ hiển thị số liệu tĩnh phía trên dashboard.
-    private JPanel createStatCard(String title, String value, String detail) {
+    private JPanel createStatCard(String title, JLabel valueLabel, String detail) {
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
@@ -239,7 +272,6 @@ public class DashBoard extends JFrame {
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
         titleLabel.setForeground(new Color(91, 112, 131));
 
-        JLabel valueLabel = new JLabel(value);
         valueLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         valueLabel.setForeground(NAV_BG);
 
@@ -298,6 +330,35 @@ public class DashBoard extends JFrame {
         contentBody.repaint();
     }
 
+    private void refreshSummaryStats() {
+        totalStock = productDao.getTotalStock();
+        totalInvoice = hoaDonDao.getTotalInvoice();
+        totalSup = supplierDao.getTotalSup();
+
+        if (totalStockValueLabel != null) {
+            totalStockValueLabel.setText(String.valueOf(totalStock));
+        }
+        if (totalInvoiceValueLabel != null) {
+            totalInvoiceValueLabel.setText(String.valueOf(totalInvoice));
+        }
+        if (totalSupValueLabel != null) {
+            totalSupValueLabel.setText(String.valueOf(totalSup));
+        }
+    }
+
+    private void startSummaryAutoRefresh() {
+        stopSummaryAutoRefresh();
+        summaryRefreshTimer = new Timer(SUMMARY_REFRESH_INTERVAL_MS, e -> refreshSummaryStats());
+        summaryRefreshTimer.start();
+    }
+
+    private void stopSummaryAutoRefresh() {
+        if (summaryRefreshTimer != null) {
+            summaryRefreshTimer.stop();
+            summaryRefreshTimer = null;
+        }
+    }
+
     // Bật/tắt chức năng dựa trên quyền ADMIN hoặc STAFF.
     private void applyRolePermissions() {
         boolean isAdmin = "ADMIN".equalsIgnoreCase(currentUser.getRole());
@@ -318,8 +379,13 @@ public class DashBoard extends JFrame {
         new LoginController(loginView);
     }
 
-    public static void main(String[] args) {
+    @Override
+    public void dispose() {
+        stopSummaryAutoRefresh();
+        super.dispose();
+    }
 
+    public static void main(String[] args) {
     }
     }
 
