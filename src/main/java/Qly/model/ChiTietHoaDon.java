@@ -1,13 +1,16 @@
 package Qly.model;
 
+// Mô tả từng dòng sản phẩm xuất hiện trên một hóa đơn bán hàng.
 public class ChiTietHoaDon {
     private String maHD;
     private String maSP;
     private int soLuong;
     private double donGia;
 
+    // Dùng cho các framework/ORM cần khởi tạo rỗng.
     public ChiTietHoaDon() {}
 
+    // Tạo mới một chi tiết hóa đơn với mã hóa đơn, sản phẩm, số lượng và giá bán.
     public ChiTietHoaDon(String maHD, String maSP, int soLuong, double donGia) {
         this.maHD = maHD;
         this.maSP = maSP;

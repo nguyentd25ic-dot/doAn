@@ -2,6 +2,7 @@ package Qly.model;
 
 import java.sql.Date;
 
+// Thực thể sản phẩm trong kho với giá bán, số lượng và hạn sử dụng.
 public class SanPham {
     private String maSP;
     private String tenSP;
@@ -11,8 +12,10 @@ public class SanPham {
     private Date hanSuDung;
     private String supplierID;
 
+    // Constructor rỗng phục vụ binding dữ liệu.
     public SanPham() {}
 
+    // Khởi tạo sản phẩm đầy đủ thông tin tồn kho.
     public SanPham(String maSP, String tenSP, double donGia, int soLuong,
                    String donViTinh, Date hanSuDung, String supplierID) {
         this.maSP = maSP;
@@ -81,6 +84,7 @@ public class SanPham {
     public void setSupplierID(String supplierID) {
         this.supplierID = supplierID;
     }
+    // Tự suy luận trạng thái hàng dựa trên hạn sử dụng và số lượng.
     public String getTrangThai() {
         Date today = new Date(System.currentTimeMillis());
         if (hanSuDung.before(today)) {

@@ -1,5 +1,6 @@
 package Qly.model;
 
+// Gói ghém các chỉ số nhập, bán và lợi nhuận trong 12 tháng.
 public class YearlyStatSummary {
     private final int purchasedQuantity;
     private final double purchasedValue;
@@ -7,6 +8,7 @@ public class YearlyStatSummary {
     private final double soldValue;
     private final double profit;
 
+    // Được xây dựng từ các truy vấn thống kê để phục vụ dashboard.
     public YearlyStatSummary(int purchasedQuantity, double purchasedValue,
                              int soldQuantity, double soldValue, double profit) {
         this.purchasedQuantity = purchasedQuantity;

@@ -2,14 +2,17 @@ package Qly.model;
 
 import java.sql.Date;
 
+// Ghi nhận thông tin tổng quát của một đợt nhập kho.
 public class NhapHang {
     private String maNhap;
     private String supplierID;
     private String userID;
     private Date ngayNhap;
 
+    // Constructor rỗng giúp dễ dàng map dữ liệu từ JDBC.
     public NhapHang() {}
 
+    // Khởi tạo phiếu nhập với nhà cung cấp, nhân viên phụ trách và ngày nhập.
     public NhapHang(String maNhap, String supplierID, String userID, Date ngayNhap) {
         this.maNhap = maNhap;
         this.supplierID = supplierID;

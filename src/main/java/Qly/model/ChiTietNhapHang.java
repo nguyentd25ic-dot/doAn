@@ -1,13 +1,16 @@
 package Qly.model;
 
+// Đại diện cho từng mặt hàng trong phiếu nhập kho.
 public class ChiTietNhapHang {
     private String maNhap;
     private String maSP;
     private int soLuong;
     private double donGiaNhap;
 
+    // Constructor mặc định phục vụ quá trình mapping dữ liệu.
     public ChiTietNhapHang() {}
 
+    // Khởi tạo chi tiết nhập với mã phiếu, sản phẩm, số lượng và giá nhập.
     public ChiTietNhapHang(String maNhap, String maSP, int soLuong, double donGiaNhap) {
         this.maNhap = maNhap;
         this.maSP = maSP;

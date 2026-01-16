@@ -26,9 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Displays all invoices with simple filtering by invoice ID.
- */
+// Hiển thị danh sách hóa đơn và cho phép lọc nhanh theo mã.
 public class InvoiceListPanelBuilder {
     private static final String PLACEHOLDER = "Nhập mã hóa đơn";
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -43,6 +41,7 @@ public class InvoiceListPanelBuilder {
         this.hoaDonDao = hoaDonDao;
     }
 
+    // Lắp ráp bảng chính, ô tìm kiếm và nút xem chi tiết.
     public JPanel build() {
         List<HoaDon> allInvoices = hoaDonDao.findAll();
         DefaultTableModel model = new DefaultTableModel(new String[]{
@@ -124,6 +123,7 @@ public class InvoiceListPanelBuilder {
         return panel;
     }
 
+    // Đổ dữ liệu vào bảng theo nguồn truyền vào.
     private void populateTable(DefaultTableModel model, List<HoaDon> source) {
         model.setRowCount(0);
         for (HoaDon hd : source) {
@@ -141,6 +141,7 @@ public class InvoiceListPanelBuilder {
         return String.format("%,.0f", value);
     }
 
+    // Bật dialog chi tiết gồm các dòng sản phẩm của hóa đơn.
     private void showInvoiceDetails(JPanel parent, JTable table) {
         int selected = table.getSelectedRow();
         if (selected == -1) {

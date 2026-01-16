@@ -2,6 +2,7 @@ package Qly.model;
 
 import java.sql.Timestamp;
 
+// Lưu thông tin tổng quan của hóa đơn bán hàng.
 public class HoaDon {
     private String maHD;
     private String maKH;
@@ -9,8 +10,10 @@ public class HoaDon {
     private Timestamp ngayLap;
     private double tongTien;
 
+    // Constructor rỗng hỗ trợ ORM hoặc quá trình binding dữ liệu.
     public HoaDon() {}
 
+    // Tạo mới một hóa đơn với khách hàng, người lập, thời gian và tổng tiền.
     public HoaDon(String maHD, String maKH, String userID, Timestamp ngayLap, double tongTien) {
         this.maHD = maHD;
         this.maKH = maKH;

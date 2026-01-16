@@ -15,6 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+// Xử lý CRUD và nghiệp vụ liên quan đến hóa đơn bán hàng.
 public class HoaDonDao {
     private static final String INSERT_INVOICE_SQL =
         "INSERT INTO HoaDon (MaHD, MaKH, UserID, NgayLap, TongTien) VALUES (?, ?, ?, ?, ?)";
@@ -32,6 +33,7 @@ public class HoaDonDao {
     private static final int DEFAULT_ID_LENGTH = 10;
     private static volatile Integer invoiceIdColumnLength;
 
+    // Sinh mã hóa đơn dựa trên ngày + số ngẫu nhiên, đảm bảo không vượt độ dài cột.
     public String generateInvoiceId() {
         String candidate = buildCandidate();
         int maxLength = getInvoiceIdColumnLength();
@@ -41,12 +43,14 @@ public class HoaDonDao {
         return candidate;
     }
 
+    // Gộp phần prefix và hậu tố ngẫu nhiên.
     private String buildCandidate() {
         String base = "HD" + LocalDateTime.now().format(ID_FORMATTER);
         String suffix = String.format("%02d", ThreadLocalRandom.current().nextInt(100));
         return base + suffix;
     }
 
+    // Tạo hóa đơn mới, ghi chi tiết và trừ tồn trong cùng một giao dịch.
     public boolean createInvoice(HoaDon hoaDon, List<ChiTietHoaDon> details) {
         if (details == null || details.isEmpty()) {
             throw new IllegalArgumentException("Invoice must contain at least one product");
@@ -117,6 +121,7 @@ public class HoaDonDao {
         return false;
     }
 
+    // Lấy danh sách hóa đơn để hiển thị theo thời gian giảm dần.
     public List<HoaDon> findAll() {
         List<HoaDon> invoices = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -131,6 +136,7 @@ public class HoaDonDao {
         return invoices;
     }
 
+    // Lấy chi tiết sản phẩm của một hóa đơn cụ thể.
     public List<InvoiceDetail> findDetails(String maHD) {
         List<InvoiceDetail> details = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -152,6 +158,7 @@ public class HoaDonDao {
         return details;
     }
 
+    // Map dữ liệu ResultSet sang đối tượng HoaDon.
     private HoaDon mapHoaDon(ResultSet rs) throws SQLException {
         HoaDon hd = new HoaDon();
         hd.setMaHD(rs.getString("MaHD"));
@@ -162,6 +169,7 @@ public class HoaDonDao {
         return hd;
     }
 
+    // Đọc độ dài cột MaHD để tránh tràn khi sinh mã.
     private int getInvoiceIdColumnLength() {
         Integer cached = invoiceIdColumnLength;
         if (cached != null) {
@@ -175,6 +183,7 @@ public class HoaDonDao {
         }
     }
 
+    // Hỏi metadata database để lấy kích thước cột mã hóa đơn.
     private int fetchInvoiceIdColumnLength() {
         try (Connection conn = DBConnection.getConnection()) {
             if (conn == null) {
@@ -202,6 +211,7 @@ public class HoaDonDao {
         return DEFAULT_ID_LENGTH;
     }
 
+    // Thực hiện truy vấn metadata lấy COLUMN_SIZE.
     private Integer queryColumnSize(DatabaseMetaData meta, String catalog, String schema,
                                     String table, String column) throws SQLException {
         try (ResultSet rs = meta.getColumns(catalog, schema, table, column)) {

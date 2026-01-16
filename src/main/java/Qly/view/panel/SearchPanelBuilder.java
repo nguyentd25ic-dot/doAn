@@ -19,9 +19,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.util.List;
 
-/**
- * Search/lookup panel that filters products as the user types.
- */
+// Panel tra cứu sản phẩm, lọc kết quả ngay khi người dùng gõ.
 public class SearchPanelBuilder {
     private static final String PLACEHOLDER = "Nhập mã hoặc tên sản phẩm";
 
@@ -35,6 +33,7 @@ public class SearchPanelBuilder {
         this.productDao = productDao;
     }
 
+    // Dựng ô tìm kiếm và bảng kết quả.
     public JPanel build() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(cardBackground);
@@ -89,6 +88,7 @@ public class SearchPanelBuilder {
         return panel;
     }
 
+    // Lọc danh sách sản phẩm dựa trên từ khóa.
     private void filter(DefaultTableModel model, String rawKey) {
         String key = rawKey == null ? "" : rawKey.trim().toLowerCase();
         model.setRowCount(0);

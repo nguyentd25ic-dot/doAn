@@ -28,9 +28,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Form panel to create new nhập hàng receipts and update stock.
- */
+// Panel lập phiếu nhập kho và cập nhật tồn sau khi lưu.
 public class NhapHangFormPanelBuilder {
     private final Color cardBackground;
     private final Color headingColor;
@@ -78,6 +76,7 @@ public class NhapHangFormPanelBuilder {
             title.setFont(new Font("Segoe UI", Font.BOLD, 22));
             title.setForeground(headingColor);
 
+            // Thông tin chung của phiếu nhập (mã, NCC, người lập).
             JPanel infoPanel = new JPanel(new GridBagLayout());
             infoPanel.setOpaque(false);
             GridBagConstraints gbc = new GridBagConstraints();
@@ -92,6 +91,7 @@ public class NhapHangFormPanelBuilder {
             addField(infoPanel, gbc, 2, 0, "Nhà cung cấp", supplierField);
             addField(infoPanel, gbc, 0, 1, "Người lập", createdByValue);
 
+            // Hàng nhập mã SP + SL + giá để thêm vào bảng.
             JPanel productInput = new JPanel(new GridLayout(1, 7, 10, 0));
             productInput.setOpaque(false);
             productField = new JTextField();
@@ -122,6 +122,7 @@ public class NhapHangFormPanelBuilder {
             table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
+            // Tổng tiền và nút tạo phiếu nhập.
             JPanel bottom = new JPanel();
             bottom.setOpaque(false);
             bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
@@ -160,6 +161,7 @@ public class NhapHangFormPanelBuilder {
             updateTotal();
         }
 
+        // Thêm một dòng chi tiết nhập vào danh sách tạm.
         private void addProduct() {
             hideMessage();
             String maSP = productField.getText().trim();
@@ -205,6 +207,7 @@ public class NhapHangFormPanelBuilder {
             updateTotal();
         }
 
+        // Ghi phiếu nhập xuống DB và cập nhật tồn.
         private void submitReceipt() {
             hideMessage();
             if (lineItems.isEmpty()) {
@@ -230,6 +233,7 @@ public class NhapHangFormPanelBuilder {
             }
         }
 
+        // Làm mới biểu mẫu sau khi thành công.
         private void resetForm() {
             lineItems.clear();
             tableModel.setRowCount(0);
@@ -238,11 +242,13 @@ public class NhapHangFormPanelBuilder {
             updateTotal();
         }
 
+        // Sinh lại mã phiếu nhập để tránh trùng.
         private void refreshReceiptId() {
             currentReceiptId = nhapHangDao.generateNhapHangId();
             receiptIdValue.setText(currentReceiptId);
         }
 
+        // Tính lại tổng tiền dựa trên danh sách chi tiết.
         private void updateTotal() {
             double total = lineItems.stream()
                 .mapToDouble(item -> item.getSoLuong() * item.getDonGiaNhap())

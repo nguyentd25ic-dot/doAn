@@ -14,9 +14,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
-/**
- * Builds the inventory (kho) panel so DashBoard stays lean.
- */
+// Dựng panel xem kho hàng để DashBoard chỉ việc nhúng vào.
 public class InventoryPanelBuilder {
     private final Color cardBackground;
     private final Color headingColor;
@@ -28,6 +26,7 @@ public class InventoryPanelBuilder {
         this.productDao = productDao;
     }
 
+    // Tạo bảng hiển thị số lượng tồn và trạng thái từng sản phẩm.
     public JPanel build() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(cardBackground);

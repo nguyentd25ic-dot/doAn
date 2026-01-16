@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Data access for nhập hàng records.
- */
+// Truy cập dữ liệu cho phiếu nhập kho và chi tiết kèm theo.
 public class NhapHangDao {
     private static final String SELECT_ALL_SQL =
         "SELECT MaNhap, SupplierID, UserID, NgayNhap FROM NhapHang ORDER BY NgayNhap DESC";
@@ -35,6 +33,7 @@ public class NhapHangDao {
     private static final int DEFAULT_ID_LENGTH = 10;
     private static volatile Integer maNhapLength;
 
+    // Lấy toàn bộ phiếu nhập (mới nhất lên trước).
     public List<NhapHang> findAll() {
         List<NhapHang> list = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -49,6 +48,7 @@ public class NhapHangDao {
         return list;
     }
 
+    // Lấy chi tiết sản phẩm của một phiếu nhập.
     public List<NhapHangDetail> findDetails(String maNhap) {
         List<NhapHangDetail> list = new ArrayList<>();
         try (Connection conn = DBConnection.getConnection();
@@ -70,6 +70,7 @@ public class NhapHangDao {
         return list;
     }
 
+    // Sinh mã Nhập hàng dựa trên ngày + số ngẫu nhiên, cắt theo độ dài cột.
     public String generateNhapHangId() {
         String candidate = "NH" + LocalDateTime.now().format(ID_FORMATTER)
             + String.format("%02d", ThreadLocalRandom.current().nextInt(100));
@@ -80,6 +81,7 @@ public class NhapHangDao {
         return candidate;
     }
 
+    // Tạo phiếu nhập và cập nhật tồn kho trong một transaction.
     public boolean createNhapHang(NhapHang nhapHang, List<ChiTietNhapHang> details) {
         if (details == null || details.isEmpty()) {
             throw new IllegalArgumentException("Phiếu nhập phải có ít nhất 1 sản phẩm");
@@ -142,6 +144,7 @@ public class NhapHangDao {
         return false;
     }
 
+    // Chuyển ResultSet thành đối tượng NhapHang.
     private NhapHang mapNhapHang(ResultSet rs) throws SQLException {
         NhapHang nh = new NhapHang();
         nh.setMaNhap(rs.getString("MaNhap"));
@@ -151,6 +154,7 @@ public class NhapHangDao {
         return nh;
     }
 
+    // Đọc và cache độ dài cột MaNhap.
     private int getMaNhapLength() {
         Integer cached = maNhapLength;
         if (cached != null) {
@@ -164,6 +168,7 @@ public class NhapHangDao {
         }
     }
 
+    // Hỏi metadata để biết chính xác kích thước cột mã nhập.
     private int fetchColumnLength() {
         try (Connection conn = DBConnection.getConnection()) {
             if (conn == null) {
@@ -189,6 +194,7 @@ public class NhapHangDao {
         return DEFAULT_ID_LENGTH;
     }
 
+    // Tiện ích đọc COLUMN_SIZE từ metadata.
     private Integer queryColumnSize(DatabaseMetaData meta, String catalog, String schema,
                                     String table, String column) throws SQLException {
         try (ResultSet rs = meta.getColumns(catalog, schema, table, column)) {

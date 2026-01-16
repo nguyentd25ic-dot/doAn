@@ -30,9 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Builds the "Lập hóa đơn" screen, complete with auto-generated metadata and line items.
- */
+// Dựng màn hình "Lập hóa đơn" với sinh mã tự động và danh sách sản phẩm.
 public class InvoicePanelBuilder {
     private static final DateTimeFormatter DISPLAY_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -83,6 +81,7 @@ public class InvoicePanelBuilder {
             title.setFont(new Font("Segoe UI", Font.BOLD, 22));
             title.setForeground(headingColor);
 
+            // Khối thông tin chung của hóa đơn.
             JPanel infoPanel = new JPanel(new GridBagLayout());
             infoPanel.setOpaque(false);
             GridBagConstraints gbc = new GridBagConstraints();
@@ -99,6 +98,7 @@ public class InvoicePanelBuilder {
             addInfoField(infoPanel, gbc, 0, 1, "Người lập", createdByValue);
             addInfoField(infoPanel, gbc, 2, 1, "Mã khách hàng", customerField);
 
+            // Hàng nhập mã sản phẩm + số lượng.
             JPanel productInput = new JPanel(new GridLayout(1, 5, 12, 0));
             productInput.setOpaque(false);
             productField = new JTextField();
@@ -126,6 +126,7 @@ public class InvoicePanelBuilder {
             table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             table.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
 
+            // Phần tổng tiền và nút tạo hóa đơn.
             JPanel summaryPanel = new JPanel();
             summaryPanel.setOpaque(false);
             summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.X_AXIS));
@@ -168,6 +169,7 @@ public class InvoicePanelBuilder {
             return root;
         }
 
+        // Thêm một mặt hàng vào danh sách tạm trước khi lưu.
         private void addProduct() {
             clearMessage();
             String maSP = productField.getText().trim();
@@ -215,6 +217,7 @@ public class InvoicePanelBuilder {
             quantityField.setText("");
         }
 
+        // Gửi dữ liệu xuống DAO để ghi hóa đơn và chi tiết trong DB.
         private void submitInvoice() {
             clearMessage();
             if (lineItems.isEmpty()) {
@@ -246,6 +249,7 @@ public class InvoicePanelBuilder {
             }
         }
 
+        // Xóa sạch form sau khi tạo hóa đơn thành công.
         private void resetForm() {
             lineItems.clear();
             tableModel.setRowCount(0);
@@ -254,6 +258,7 @@ public class InvoicePanelBuilder {
             updateTotalLabel();
         }
 
+        // Sinh lại mã hóa đơn và timestamp hiện tại.
         private void refreshInvoiceMetadata() {
             currentInvoiceId = hoaDonDao.generateInvoiceId();
             currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
@@ -261,6 +266,7 @@ public class InvoicePanelBuilder {
             timestampValue.setText(DISPLAY_TIME_FORMAT.format(currentTimestamp.toLocalDateTime()));
         }
 
+        // Cập nhật label tổng tiền dựa trên lineItems.
         private void updateTotalLabel() {
             double total = lineItems.stream()
                 .mapToDouble(item -> item.getDonGia() * item.getSoLuong())

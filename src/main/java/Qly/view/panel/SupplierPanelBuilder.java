@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+// Panel quản lý CRUD nhà cung cấp, gồm bảng và form chỉnh sửa.
 public class SupplierPanelBuilder {
     private final Color cardBackground;
     private final Color headingColor;
@@ -125,6 +126,7 @@ public class SupplierPanelBuilder {
             reloadTable();
         }
 
+        // Tải lại dữ liệu nhà cung cấp vào bảng.
         private void reloadTable() {
             tableModel.setRowCount(0);
             for (Supplier sup : supplierDao.getSuppliers()) {
@@ -138,6 +140,7 @@ public class SupplierPanelBuilder {
             }
         }
 
+        // Khi chọn trên bảng sẽ tự đổ xuống form.
         private void fillFormFromSelection() {
             int row = table.getSelectedRow();
             if (row == -1) {
@@ -205,6 +208,7 @@ public class SupplierPanelBuilder {
             }
         }
 
+        // Ghép dữ liệu từ form thành đối tượng Supplier.
         private Supplier buildSupplierFromForm() {
             String id = txtId.getText().trim();
             String name = txtName.getText().trim();

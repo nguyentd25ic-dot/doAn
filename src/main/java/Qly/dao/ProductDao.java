@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+// Thao tác CRUD với bảng sản phẩm và thông tin liên quan.
 public class ProductDao {
     private static final String BASE_SELECT =
         "SELECT sp.MaSP, sp.TenSP, sp.DonGia, sp.SoLuong, sp.DonViTinh, sp.HanSuDung, " +
@@ -19,6 +20,7 @@ public class ProductDao {
 
     private static final String DELETE_SQL = "DELETE FROM SanPham WHERE MaSP = ?";
 
+    // Lấy danh sách toàn bộ sản phẩm cùng supplier đi kèm.
     public List<SanPham> findAll() {
         List<SanPham> list = new ArrayList<>();
         Connection con = DBConnection.getConnection();
@@ -35,6 +37,7 @@ public class ProductDao {
         return list;
     }
 
+    // Thêm sản phẩm mới vào kho.
     public void insert(SanPham sanPham)  {
         Connection con = DBConnection.getConnection();
         try (Connection c = con;
@@ -56,6 +59,7 @@ public class ProductDao {
         }
     }
 
+    // Xóa sản phẩm theo mã.
     public void deleteById(String maSP) {
         Connection con = DBConnection.getConnection();
         try (Connection c = con;
@@ -66,6 +70,7 @@ public class ProductDao {
             e.printStackTrace();
         }
     }
+    // Cập nhật thông tin sản phẩm hiện có.
     public boolean update(SanPham sp) {
         String sql = """
         UPDATE sanpham
@@ -99,6 +104,7 @@ public class ProductDao {
         return false;
     }
 
+    // Tìm một sản phẩm cụ thể phục vụ form chỉnh sửa.
     public SanPham findById(String maSP) {
         String sql = BASE_SELECT + " WHERE sp.MaSP = ?";
         try (Connection c = DBConnection.getConnection();
@@ -115,6 +121,7 @@ public class ProductDao {
         return null;
     }
 
+    // Map hàng dữ liệu SQL sang đối tượng SanPham.
     private SanPham mapSanPham(ResultSet rs) throws SQLException {
         SanPham sp = new SanPham();
         sp.setMaSP(rs.getString("MaSP"));

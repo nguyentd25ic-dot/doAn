@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+// Cung cấp CRUD cho bảng nhà cung cấp.
 public class SupplierDao {
     private static final String SELECT_ALL = "SELECT SupplierID, SupplierName, Phone, Email, Address FROM Supplier";
     private static final String INSERT_SQL =
@@ -15,6 +16,7 @@ public class SupplierDao {
         "UPDATE Supplier SET SupplierName = ?, Phone = ?, Email = ?, Address = ? WHERE SupplierID = ?";
     private static final String DELETE_SQL = "DELETE FROM Supplier WHERE SupplierID = ?";
 
+    // Lấy danh sách nhà cung cấp để hiển thị/đổ vào combobox.
     public List<Supplier> getSuppliers() {
         List<Supplier> list = new ArrayList<>();
         try (Connection con = DBConnection.getConnection();
@@ -35,6 +37,7 @@ public class SupplierDao {
         return list;
     }
 
+    // Thêm nhà cung cấp mới.
     public boolean insertSupplier(Supplier supplier) {
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(INSERT_SQL)) {
@@ -50,6 +53,7 @@ public class SupplierDao {
         return false;
     }
 
+    // Cập nhật thông tin nhà cung cấp.
     public boolean updateSupplier(Supplier supplier) {
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(UPDATE_SQL)) {
@@ -65,6 +69,7 @@ public class SupplierDao {
         return false;
     }
 
+    // Xóa nhà cung cấp theo mã.
     public boolean deleteSupplier(String supplierId) {
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(DELETE_SQL)) {

@@ -26,9 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Shows all nhập hàng transactions with quick filtering by mã nhập.
- */
+// Hiển thị lịch sử nhập hàng và lọc nhanh theo mã phiếu.
 public class NhapHangListPanelBuilder {
     private static final String PLACEHOLDER = "Nhập mã nhập";
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -43,6 +41,7 @@ public class NhapHangListPanelBuilder {
         this.nhapHangDao = nhapHangDao;
     }
 
+    // Dựng bảng chính, ô tìm kiếm và nút xem chi tiết.
     public JPanel build() {
         List<NhapHang> allEntries = nhapHangDao.findAll();
         DefaultTableModel model = new DefaultTableModel(new String[]{
@@ -124,6 +123,7 @@ public class NhapHangListPanelBuilder {
         return panel;
     }
 
+    // Đổ dữ liệu vào bảng từ danh sách truyền vào.
     private void populate(DefaultTableModel model, List<NhapHang> source) {
         model.setRowCount(0);
         for (NhapHang nh : source) {
@@ -136,6 +136,7 @@ public class NhapHangListPanelBuilder {
         }
     }
 
+    // Mở dialog chi tiết các mặt hàng trong phiếu nhập.
     private void showDetails(JPanel parent, JTable table) {
         int selected = table.getSelectedRow();
         if (selected == -1) {

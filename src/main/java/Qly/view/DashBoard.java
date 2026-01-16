@@ -20,6 +20,7 @@ import Qly.view.panel.SupplierPanelBuilder;
 import javax.swing.*;
 import java.awt.*;
 
+// Màn hình điều khiển trung tâm sau khi đăng nhập.
 public class DashBoard extends JFrame {
     private static final Color NAV_BG = Color.decode("#0F6D91");
     private static final Color NAV_BG_DARK = Color.decode("#0B4F66");
@@ -56,6 +57,7 @@ public class DashBoard extends JFrame {
         root.setBackground(CONTENT_BG);
         setContentPane(root);
 
+        // Chuẩn bị các DAO chia sẻ cho toàn bộ panel con.
         ProductDao productDao = new ProductDao();
         SupplierDao supplierDao = new SupplierDao();
         HoaDonDao hoaDonDao = new HoaDonDao();
@@ -83,6 +85,7 @@ public class DashBoard extends JFrame {
         setVisible(true);
     }
 
+    // Tạo menu điều hướng bên trái theo vai trò người dùng.
     private JPanel buildNavigation(User user) {
         JPanel navPanel = new JPanel();
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
@@ -154,6 +157,7 @@ public class DashBoard extends JFrame {
         return navPanel;
     }
 
+    // Khu vực nội dung chính hiển thị số liệu nhanh và panel con.
     private JPanel buildMainContent(User user) {
         JPanel mainPanel = new JPanel(new BorderLayout(0, 20));
         mainPanel.setBackground(CONTENT_BG);
@@ -207,6 +211,7 @@ public class DashBoard extends JFrame {
         return mainPanel;
     }
 
+    // Button điều hướng có style thống nhất.
     private JButton createNavButton(String text) {
         JButton button = new JButton(text);
         button.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -219,6 +224,7 @@ public class DashBoard extends JFrame {
         button.setHorizontalAlignment(SwingConstants.LEFT);
         return button;
     }
+    // Thẻ nhỏ hiển thị số liệu tĩnh phía trên dashboard.
     private JPanel createStatCard(String title, String value, String detail) {
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
@@ -245,6 +251,7 @@ public class DashBoard extends JFrame {
         return card;
     }
 
+    // Gán hành động cho từng nút điều hướng.
     private void wireActions() {
         btnKho.addActionListener(e -> setContent(inventoryPanelBuilder.build()));
         btnTraCuu.addActionListener(e -> setContent(searchPanelBuilder.build()));
@@ -258,6 +265,7 @@ public class DashBoard extends JFrame {
         btnDangXuat.addActionListener(e -> logout());
     }
 
+    // Hiển thị thẻ giới thiệu/ngắn gọn mặc định.
     private void showContent(String title, String description) {
         JPanel card = new JPanel();
         card.setBackground(CARD_BG);
@@ -278,6 +286,7 @@ public class DashBoard extends JFrame {
         setContent(card);
     }
 
+    // Thay thế nội dung vùng trung tâm bằng panel mới.
     private void setContent(JPanel panel) {
         contentBody.removeAll();
         contentBody.add(panel, BorderLayout.CENTER);
@@ -285,6 +294,7 @@ public class DashBoard extends JFrame {
         contentBody.repaint();
     }
 
+    // Bật/tắt chức năng dựa trên quyền ADMIN hoặc STAFF.
     private void applyRolePermissions() {
         boolean isAdmin = "ADMIN".equalsIgnoreCase(currentUser.getRole());
         btnSanPham.setEnabled(isAdmin);
@@ -297,6 +307,7 @@ public class DashBoard extends JFrame {
         roleBadge.setText(isAdmin ? "ADMIN" : "STAFF");
     }
 
+    // Đăng xuất và quay về màn hình Login.
     private void logout() {
         dispose();
         Login loginView = new Login();

@@ -6,6 +6,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import Qly.controller.LoginController;
 
+// Giao diện đăng nhập với bố cục hero + form hiện đại.
 public class Login extends JFrame {
     private static final Color PRIMARY = Color.decode("#163172");
     private static final Color SECONDARY = Color.decode("#1E56A0");
@@ -33,6 +34,7 @@ public class Login extends JFrame {
         root.setBackground(CANVAS);
         setContentPane(root);
 
+        // Cột bên trái hiển thị thương hiệu với gradient.
         JPanel heroPanel = new GradientPanel();
         heroPanel.setLayout(new BoxLayout(heroPanel, BoxLayout.Y_AXIS));
         heroPanel.setBorder(BorderFactory.createEmptyBorder(60, 50, 60, 50));
@@ -50,6 +52,7 @@ public class Login extends JFrame {
         heroPanel.add(brandLabel);
         heroPanel.add(sloganLabel);
 
+        // Phần form đăng nhập đặt trong thẻ trắng ở bên phải.
         JPanel formWrapper = new JPanel(new GridBagLayout());
         formWrapper.setOpaque(false);
         formWrapper.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -132,6 +135,7 @@ public class Login extends JFrame {
         new LoginController(lg);
     }
 
+    // TextField với border đổi màu khi focus.
     private JTextField createStyledTextField(String placeholder) {
         JTextField field = new JTextField();
         field.setFont(new Font("Segoe UI", Font.PLAIN, 15));
@@ -162,6 +166,7 @@ public class Login extends JFrame {
         return field;
     }
 
+    // Ghép label và input theo chiều dọc để tái sử dụng.
     private JPanel createLabeledField(String labelText, JComponent component) {
         JPanel container = new JPanel();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
@@ -180,6 +185,7 @@ public class Login extends JFrame {
         return container;
     }
 
+    // Tạo hiệu ứng viền nổi bật khi người dùng focus.
     private void attachFocusBorder(JComponent component) {
         component.addFocusListener(new FocusAdapter() {
             @Override
@@ -194,6 +200,7 @@ public class Login extends JFrame {
         });
     }
 
+    // Panel vẽ nền gradient cam - xanh biển.
     private static class GradientPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {

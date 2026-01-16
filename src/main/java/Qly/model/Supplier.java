@@ -1,5 +1,6 @@
 package Qly.model;
 
+// Lưu thông tin nhà cung cấp dụng cụ y tế.
 public class Supplier {
     private String supplierID;
     private String supplierName;
@@ -7,8 +8,10 @@ public class Supplier {
     private String email;
     private String address;
 
+    // Constructor rỗng để tiện bind dữ liệu từ database.
     public Supplier() {}
 
+    // Khởi tạo nhà cung cấp với các thông tin liên hệ đầy đủ.
     public Supplier(String supplierID, String supplierName, String phone, String email, String address) {
         this.supplierID = supplierID;
         this.supplierName = supplierName;

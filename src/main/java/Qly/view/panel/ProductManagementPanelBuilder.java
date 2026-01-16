@@ -18,9 +18,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.sql.Date;
 
-/**
- * CRUD form for managing products.
- */
+// Form CRUD để quản lý danh sách sản phẩm.
 public class ProductManagementPanelBuilder {
     private final Color cardBackground;
     private final Color headingColor;
@@ -32,6 +30,7 @@ public class ProductManagementPanelBuilder {
         this.productDao = productDao;
     }
 
+    // Lắp ráp form nhập liệu và các nút hành động.
     public JPanel build() {
         JPanel panel = new JPanel(new BorderLayout(20, 20));
         panel.setBackground(cardBackground);
@@ -106,6 +105,7 @@ public class ProductManagementPanelBuilder {
         return panel;
     }
 
+    // Tạo đối tượng SanPham từ giá trị các ô input.
     private SanPham buildProduct(JTextField txtMa, JTextField txtTen, JTextField txtGia,
                                  JTextField txtSoLuong, JTextField txtDonVi,
                                  JTextField txtHan, JTextField txtNcc) {
@@ -121,6 +121,7 @@ public class ProductManagementPanelBuilder {
         );
     }
 
+    // Tiện ích thêm label + textfield theo GridBag.
     private void addField(JPanel panel, GridBagConstraints gbc, int x, int y,
                           String labelText, JTextField field, Font labelFont) {
         JLabel label = new JLabel(labelText);
@@ -146,6 +147,7 @@ public class ProductManagementPanelBuilder {
         btn.setPreferredSize(new Dimension(120, 40));
     }
 
+    // Hiển thị thông báo ngắn rồi tự ẩn sau 3 giây.
     private void showMessage(JLabel label, String text, Color color) {
         label.setText(text);
         label.setForeground(color);
