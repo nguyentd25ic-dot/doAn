@@ -20,6 +20,8 @@ public class ProductDao {
 
     private static final String DELETE_SQL = "DELETE FROM SanPham WHERE MaSP = ?";
 
+    private static final String TOTAL_SQL= "SELECT SUM(Soluong) FROM SanPham";
+
     // Lấy danh sách toàn bộ sản phẩm cùng supplier đi kèm.
     public List<SanPham> findAll() {
         List<SanPham> list = new ArrayList<>();
@@ -120,7 +122,19 @@ public class ProductDao {
         }
         return null;
     }
+    public int getTotalStock() {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(TOTAL_SQL);
+             ResultSet rs = ps.executeQuery()) {
 
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     // Map hàng dữ liệu SQL sang đối tượng SanPham.
     private SanPham mapSanPham(ResultSet rs) throws SQLException {
         SanPham sp = new SanPham();

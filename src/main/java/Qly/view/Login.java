@@ -44,7 +44,7 @@ public class Login extends JFrame {
         brandLabel.setForeground(Color.WHITE);
         brandLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
 
-        JLabel sloganLabel = new JLabel("Đăng nhập để tiếp tục quản trị");
+        JLabel sloganLabel = new JLabel("Đăng nhập để tiếp tục");
         sloganLabel.setForeground(new Color(255, 255, 255, 200));
         sloganLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         sloganLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -72,7 +72,7 @@ public class Login extends JFrame {
         formPanel.setOpaque(false);
         formPanel.setPreferredSize(new Dimension(360, Integer.MAX_VALUE));
 
-        JLabel welcomeLabel = new JLabel("Xin chào lại bạn!");
+        JLabel welcomeLabel = new JLabel("Xin chào!");
         welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         welcomeLabel.setForeground(PRIMARY);
 

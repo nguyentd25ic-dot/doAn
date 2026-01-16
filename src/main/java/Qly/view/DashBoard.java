@@ -63,6 +63,8 @@ public class DashBoard extends JFrame {
         HoaDonDao hoaDonDao = new HoaDonDao();
         NhapHangDao nhapHangDao = new NhapHangDao();
         StatsDao statsDao = new StatsDao();
+        //lấy thông tin cho stat card
+
         inventoryPanelBuilder = new InventoryPanelBuilder(CARD_BG, NAV_BG_DARK, productDao);
         searchPanelBuilder = new SearchPanelBuilder(CARD_BG, NAV_BG_DARK, productDao);
         productManagementPanelBuilder = new ProductManagementPanelBuilder(CARD_BG, NAV_BG_DARK, productDao);
@@ -83,6 +85,7 @@ public class DashBoard extends JFrame {
         applyRolePermissions();
         showContent("Tổng quan", "Chọn tính năng để xem chi tiết dòng sản phẩm, đơn hàng và kho dụng cụ y tế.");
         setVisible(true);
+        int totalStock = productDao.getTotalStock();
     }
 
     // Tạo menu điều hướng bên trái theo vai trò người dùng.
@@ -194,7 +197,7 @@ public class DashBoard extends JFrame {
 
         JPanel statPanel = new JPanel(new GridLayout(1, 3, 18, 18));
         statPanel.setOpaque(false);
-        statPanel.add(createStatCard("Tồn kho", "1.240", "Dụng cụ sẵn sàng"));
+        statPanel.add(createStatCard("Tồn kho", String.valueOf(totalStock), "Dụng cụ sẵn sàng"));
         statPanel.add(createStatCard("Đơn hàng mở", "32", "Đang xử lý"));
         statPanel.add(createStatCard("Nhà cung cấp", "14", "Đang hoạt động"));
 
@@ -221,7 +224,8 @@ public class DashBoard extends JFrame {
         button.setFocusPainted(false);
         button.setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setHorizontalAlignment(SwingConstants.CENTER);
+        button.setMaximumSize(new Dimension(170, button.getPreferredSize().height));
         return button;
     }
     // Thẻ nhỏ hiển thị số liệu tĩnh phía trên dashboard.
@@ -313,6 +317,7 @@ public class DashBoard extends JFrame {
         Login loginView = new Login();
         new LoginController(loginView);
     }
+
     public static void main(String[] args) {
 
     }
