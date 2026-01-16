@@ -83,20 +83,24 @@ public class ProductManagementPanelBuilder {
         message.setForeground(new Color(40, 167, 69));
         message.setVisible(false);
 
-        btnThem.addActionListener(e -> {
+        btnThem.addActionListener(e -> handleProductAction(message, () -> {
             productDao.insert(buildProduct(txtMa, txtTen, txtGia, txtSoLuong, txtDonVi, txtHan, txtNcc));
-            showMessage(message, "Thêm sản phẩm thành công", Color.GREEN);
-        });
+            showMessage(message, "Thêm sản phẩm thành công", new Color(40, 167, 69));
+        }));
 
-        btnSua.addActionListener(e -> {
+        btnSua.addActionListener(e -> handleProductAction(message, () -> {
             productDao.update(buildProduct(txtMa, txtTen, txtGia, txtSoLuong, txtDonVi, txtHan, txtNcc));
-            showMessage(message, "Cập nhật sản phẩm thành công", Color.GREEN);
-        });
+            showMessage(message, "Cập nhật sản phẩm thành công", new Color(40, 167, 69));
+        }));
 
-        btnXoa.addActionListener(e -> {
-            productDao.deleteById(txtMa.getText());
-            showMessage(message, "Xóa sản phẩm thành công", Color.GREEN);
-        });
+        btnXoa.addActionListener(e -> handleProductAction(message, () -> {
+            String id = txtMa.getText().trim();
+            if (id.isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng nhập mã sản phẩm để xóa");
+            }
+            productDao.deleteById(id);
+            showMessage(message, "Xóa sản phẩm thành công", new Color(40, 167, 69));
+        }));
 
         panel.add(title, BorderLayout.NORTH);
         panel.add(form, BorderLayout.CENTER);
@@ -109,16 +113,47 @@ public class ProductManagementPanelBuilder {
     private SanPham buildProduct(JTextField txtMa, JTextField txtTen, JTextField txtGia,
                                  JTextField txtSoLuong, JTextField txtDonVi,
                                  JTextField txtHan, JTextField txtNcc) {
-        Date han = Date.valueOf(txtHan.getText().trim());
-        return new SanPham(
-            txtMa.getText(),
-            txtTen.getText(),
-            Double.parseDouble(txtGia.getText()),
-            Integer.parseInt(txtSoLuong.getText()),
-            txtDonVi.getText(),
-            han,
-            txtNcc.getText()
-        );
+        String ma = requireText(txtMa, "mã sản phẩm");
+        String ten = requireText(txtTen, "tên sản phẩm");
+        String donVi = requireText(txtDonVi, "đơn vị");
+        String ncc = requireText(txtNcc, "mã nhà cung cấp");
+
+        double gia;
+        try {
+            gia = Double.parseDouble(requireText(txtGia, "đơn giá"));
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Đơn giá phải là số hợp lệ");
+        }
+        if (gia < 0) {
+            throw new IllegalArgumentException("Đơn giá phải lớn hơn 0");
+        }
+
+        int soLuong;
+        try {
+            soLuong = Integer.parseInt(requireText(txtSoLuong, "số lượng"));
+        } catch (NumberFormatException ex) {
+            throw new IllegalArgumentException("Số lượng phải là số nguyên");
+        }
+        if (soLuong < 0) {
+            throw new IllegalArgumentException("Số lượng không được âm");
+        }
+
+        Date han;
+        try {
+            han = Date.valueOf(requireText(txtHan, "hạn sử dụng"));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Hạn sử dụng phải theo định dạng yyyy-mm-dd");
+        }
+
+        return new SanPham(ma, ten, gia, soLuong, donVi, han, ncc);
+    }
+
+    private String requireText(JTextField field, String label) {
+        String value = field.getText().trim();
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng nhập " + label);
+        }
+        return value;
     }
 
     // Tiện ích thêm label + textfield theo GridBag.
@@ -148,6 +183,16 @@ public class ProductManagementPanelBuilder {
     }
 
     // Hiển thị thông báo ngắn rồi tự ẩn sau 3 giây.
+    private void handleProductAction(JLabel messageLabel, Runnable action) {
+        try {
+            action.run();
+        } catch (IllegalArgumentException ex) {
+            showMessage(messageLabel, ex.getMessage(), new Color(220, 53, 69));
+        } catch (Exception ex) {
+            showMessage(messageLabel, "Có lỗi xảy ra. Vui lòng thử lại", new Color(220, 53, 69));
+        }
+    }
+
     private void showMessage(JLabel label, String text, Color color) {
         label.setText(text);
         label.setForeground(color);
